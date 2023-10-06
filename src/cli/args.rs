@@ -15,10 +15,10 @@ pub struct Args {
     /// Print the version
     #[arg(long)]
     pub version: bool,
+    #[arg(short, long, default_value = "4000")]
+    pub port: u16,
     #[arg(short, long)]
     pub conf: PathBuf,
-    // #[arg(short, long, default_value = "")]
-    // pub sizes: Vec<String>,
     // The log file or folder to analyze
     // pub file: PathBuf,
 }

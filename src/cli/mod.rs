@@ -26,7 +26,7 @@ pub fn run() -> Result<(), ThumbServerError> {
         Ok(conf) => {
             debug!("Success confuration");
             conf::init(conf);
-            let _ = server::start();
+            let _ = server::start(args.port);
         }
         Err(err) => return Err(err),
     }

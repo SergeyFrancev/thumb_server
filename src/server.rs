@@ -63,7 +63,7 @@ async fn hello(request: Request<Body>) -> Result<Response<Body>, Infallible> {
 }
 
 #[tokio::main]
-pub async fn start() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+pub async fn start(port: u16) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // pretty_env_logger::init();
 
     // For every connection, we must make a `Service` to handle all
@@ -75,7 +75,7 @@ pub async fn start() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         async { Ok::<_, Infallible>(service_fn(hello)) }
     });
 
-    let addr = ([127, 0, 0, 1], 1234).into();
+    let addr = ([127, 0, 0, 1], port).into();
 
     let server = Server::bind(&addr).serve(make_svc);
 
