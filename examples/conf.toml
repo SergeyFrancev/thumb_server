@@ -1,0 +1,2 @@
+base_dir = "../tests/testdata"
+sizes = ["60x80", "30x40"]
