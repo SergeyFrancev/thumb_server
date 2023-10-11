@@ -3,7 +3,7 @@ use std::str::FromStr;
 
 use crate::*;
 use cli_log::*;
-use regex::Regex;
+// use regex::Regex;
 
 #[derive(Debug, Clone)]
 pub struct ImgResult {
@@ -47,13 +47,20 @@ impl ImgResult {
         self.width
     }
 
-    pub fn result(&self) -> Option<PathBuf> {
-        self.result.clone()
+    pub fn result(&self) -> Option<&PathBuf> {
+        self.result.as_ref()
     }
 
     pub fn uri(&self) -> &PathBuf {
         &self.uri
     }
+}
+
+macro_rules! regex {
+    ($re:literal $(,)?) => {{
+        static RE: once_cell::sync::OnceCell<regex::Regex> = once_cell::sync::OnceCell::new();
+        RE.get_or_init(|| regex::Regex::new($re).unwrap())
+    }};
 }
 
 #[derive(Debug, Clone)]
@@ -101,7 +108,7 @@ impl Resolver<'_> {
         debug!("Start test Uri: {}", uri);
 
         // Check uri not contains relative parts ".." or "."
-        if Regex::new(r"\/\.+\/").unwrap().is_match(uri) {
+        if regex!(r"\/\.+\/").is_match(uri) {
             debug!("Uri contains /.+/ ERROR: {}", uri);
             return Err(ThumbServerError::InvalidUri);
         }
@@ -133,8 +140,7 @@ impl Resolver<'_> {
 
     fn parse_thumb_param(&self, mut img: ImgResult) -> Result<ImgResult, ThumbServerError> {
         let p = PathBuf::from("/").join(&img.uri);
-        let size = Regex::new(r"^/?(?<directory>.*)?/(?<size>[\d]+x[\d]+)/(?<file>[^\/]+$)")
-            .unwrap()
+        let size = regex!(r"^/?(?<directory>.*)?/(?<size>[\d]+x[\d]+)/(?<file>[^\/]+$)")
             .captures(p.to_str().unwrap());
 
         return match size {

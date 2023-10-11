@@ -9,8 +9,8 @@ use crate::ThumbServerError;
 
 #[derive(Deserialize, Debug)]
 pub struct Config {
-    base_dir: PathBuf,
-    sizes: Vec<String>,
+    pub base_dir: PathBuf,
+    pub sizes: Vec<String>,
 }
 
 impl Config {

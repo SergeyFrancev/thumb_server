@@ -7,4 +7,7 @@ mod resolver;
 mod server;
 mod thumb;
 
+// #[global_allocator]
+// static ALLOC: leak::LeakingAllocator = leak::LeakingAllocator::new();
+
 pub use {cli::*, conf::*, errors::*, resolver::*, server::*, thumb::*};

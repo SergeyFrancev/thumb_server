@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod test_resolve_img {
+mod resolve_img {
     use std::path::PathBuf;
 
     use config_file::FromConfigFile;
@@ -24,8 +24,9 @@ mod test_resolve_img {
         let resolver = Resolver::from_conf(&conf);
         let res = resolver.resolve("/image.jpeg");
         assert!(res.is_ok(), "Valid path is not OK");
-        let img = res.unwrap().result().unwrap();
-        assert_eq!(img, PathBuf::from(BASE_DIR).join("image.jpeg"))
+        let r = res.unwrap();
+        let img = r.result().unwrap();
+        assert_eq!(img, &PathBuf::from(BASE_DIR).join("image.jpeg"))
     }
 
     #[test]
@@ -58,8 +59,9 @@ mod test_resolve_img {
         let resolver = Resolver::from_conf(&conf);
         let res = resolver.resolve("/dir.dot/image.jpeg");
         assert!(res.is_ok(), "Image dir with dot not available");
-        let img = res.unwrap().result().unwrap();
-        assert_eq!(img, PathBuf::from(BASE_DIR).join("dir.dot/image.jpeg"))
+        let r = res.unwrap();
+        let img = r.result().unwrap();
+        assert_eq!(img, &PathBuf::from(BASE_DIR).join("dir.dot/image.jpeg"))
     }
 
     #[test]
@@ -79,7 +81,7 @@ mod test_resolve_img {
     }
 
     #[test]
-    fn not_exist_thumb_uri_return_source_and_target() {
+    fn return_source_and_target_for_thumb() {
         let conf = Config::from_config_file(PATH_TO_CONF).unwrap();
         let resolver = Resolver::from_conf(&conf);
         let res = resolver.resolve("/60x80/image.jpeg");
@@ -168,10 +170,11 @@ mod test_resolve_img {
         let resolver = Resolver::from_conf(&conf);
         let res = resolver.resolve("/dir.dot/image.jpeg");
         assert!(res.is_ok(), "Exist source return ERROR");
-        let img = res.unwrap().result().unwrap();
+        let r = res.unwrap();
+        let img = r.result().unwrap();
         assert_eq!(
             img,
-            PathBuf::from_iter([conf.base_dir(), &PathBuf::from("dir.dot/image.jpeg")])
+            &PathBuf::from_iter([conf.base_dir(), &PathBuf::from("dir.dot/image.jpeg")])
         );
     }
 
@@ -181,10 +184,11 @@ mod test_resolve_img {
         let resolver = Resolver::from_conf(&conf);
         let res = resolver.resolve("/dir.dot/60x80/image.jpeg");
         assert!(res.is_ok(), "Exist thumb return ERROR");
-        let img = res.unwrap().result().unwrap();
+        let r = res.unwrap();
+        let img = r.result().unwrap();
         assert_eq!(
             img,
-            PathBuf::from_iter([conf.base_dir(), &PathBuf::from("dir.dot/60x80/image.jpeg")])
+            &PathBuf::from_iter([conf.base_dir(), &PathBuf::from("dir.dot/60x80/image.jpeg")])
         );
     }
 

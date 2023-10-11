@@ -16,3 +16,19 @@ regex = "1.9.6"
 serde = { version = "1.0.188", features = ["derive"] }
 thiserror = "1.0.49"
 tokio = { version = "1.32.0", features = ["full"] }
+
+[dev-dependencies]
+criterion = { version = "0.5.1", features = ["html_reports"] }
+
+[profile.release]
+debug = false
+lto = false
+# codegen-units = 1
+
+[[bench]]
+name = "return_file"
+harness = false
+
+[[bench]]
+name = "resolver"
+harness = false

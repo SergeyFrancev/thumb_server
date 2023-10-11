@@ -1,4 +1,4 @@
-use std::{convert::Infallible, fs::File, path::PathBuf};
+use std::{convert::Infallible, fs::File, io::BufReader, path::PathBuf};
 
 use cli_log::debug;
 use hyper::{
@@ -9,18 +9,13 @@ use std::io::Read;
 
 use crate::{resolve, thumb_img, ThumbServerError};
 
-fn return_file(path: &PathBuf) -> Result<Vec<u8>, ThumbServerError> {
-    let file = File::open(path);
-    if let Err(err) = file {
-        return Err(ThumbServerError::Io(err));
-    }
+pub fn return_file(path: &PathBuf) -> Result<Vec<u8>, ThumbServerError> {
+    let mut reader = BufReader::new(File::open(path).map_err(ThumbServerError::Io)?);
 
-    let mut file = file.unwrap();
     let mut buffer = Vec::new();
-    let read_result = file.read_to_end(&mut buffer);
-    if let Err(err) = read_result {
-        return Err(ThumbServerError::Io(err));
-    }
+    let _ = reader
+        .read_to_end(&mut buffer)
+        .map_err(ThumbServerError::Io)?;
 
     Ok(buffer)
 }
@@ -36,16 +31,12 @@ pub async fn serve_file(uri: &str) -> Result<Vec<u8>, ThumbServerError> {
 
     // Resolve thumb request
     let target = img_result.target();
-    let thumb = thumb_img(
+    let _ = thumb_img(
         &img_result.source(),
         &target,
         img_result.width(),
         img_result.height(),
-    );
-
-    if let Err(err) = thumb {
-        return Err(err);
-    }
+    )?;
 
     debug!("SUCCESS File: {}", target.display());
     return_file(&target)

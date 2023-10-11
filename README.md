@@ -2,6 +2,8 @@
 
 [![Build Status](https://github.com/SergeyFrancev/thumb_server/actions/workflows/rust.yml/badge.svg)](https://github.com/SergeyFrancev/thumb_server/actions)
 
+![Logo](https://github.com/SergeyFrancev/thumb_server/blob/main/examples/logo.jpg?raw=true)
+
 This is simple image thumbnail HTTP server.
 
 - [Hyper](https://github.com/hyperium/hyper) - HTTP server
@@ -62,4 +64,10 @@ thumb_server -c ./conf.toml -p 1234
 
 ```
 cargo tests
+```
+
+## Benchmark
+
+```
+cargo bench
 ```

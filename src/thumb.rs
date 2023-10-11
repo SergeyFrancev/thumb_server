@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-use cli_log::{debug, error};
+use cli_log::debug;
 
 use crate::ThumbServerError;
 
@@ -27,20 +27,14 @@ pub fn thumb_img(
     nh: u32,
 ) -> Result<(), ThumbServerError> {
     debug!("Create thumb from:{}", source.display());
-    let image_res = image::open(source);
-    if let Err(err) = image_res {
-        error!("ERROR open source: {} [{}]", source.display(), err);
-        return Err(ThumbServerError::CreateThumbError(err));
-    }
+    let image_res = image::open(source).map_err(ThumbServerError::CreateThumbError)?;
 
     create_dir_for_file(target)?;
 
-    let thumb = image_res.unwrap().thumbnail(nw, nh);
-    let save_result = thumb.save(target);
-    if let Err(_err) = save_result {
-        error!("ERROR create target: {}", _err);
-        return Err(ThumbServerError::CreateThumbError(_err));
-    }
+    let thumb = image_res.thumbnail(nw, nh);
+    let _ = thumb
+        .save(target)
+        .map_err(ThumbServerError::CreateThumbError)?;
 
     Ok(())
 }
